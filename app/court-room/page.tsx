@@ -1,23 +1,12 @@
-import React from 'react';
+'use client';
+import Header from '../components/Header';
+import ManualTimer from '../components/ManualTimer';
 
-const ComeBackLater: React.FC = () => {
+export default function Home() {
   return (
-    <div
-      style={{
-        height: '100vh',
-        margin: 0,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        fontFamily: 'Arial, sans-serif',
-        backgroundColor: '#f0f0f0',
-        color: '#333',
-        fontSize: '2rem',
-      }}
-    >
-      Come back later
+    <div>
+      <Header />
+      <ManualTimer initialSeconds={0} />
     </div>
   );
-};
-
-export default ComeBackLater;
+}

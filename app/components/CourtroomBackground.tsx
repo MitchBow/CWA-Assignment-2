@@ -1,13 +1,26 @@
 'use client';
-import React, { ReactNode } from 'react';
+import React, { ReactNode, ReactElement, isValidElement, useState } from 'react';
 
 type CourtroomBackgroundProps = {
   courtroomSrc: string;
   deskSrc: string;
-  children?: ReactNode; // things that sit above desk (judge, lawyer, etc.)
+  children?: ReactNode;
 };
 
 export default function CourtroomBackground({ courtroomSrc, deskSrc, children }: CourtroomBackgroundProps) {
+  const [failed, setFailed] = useState(false); // ✅ start with desk
+
+  // Function to trigger courtroom when StageManager signals failure
+  const triggerCourtroom = () => setFailed(true);
+
+  // Inject triggerCourtroom into children
+  const childrenWithProps = React.Children.map(children, (child) => {
+    if (isValidElement(child)) {
+      return React.cloneElement(child as ReactElement<any>, { triggerCourtroom });
+    }
+    return child;
+  });
+
   return (
     <div
       style={{
@@ -17,30 +30,14 @@ export default function CourtroomBackground({ courtroomSrc, deskSrc, children }:
         overflow: 'hidden',
       }}
     >
-      {/* Courtroom background */}
+      {/* Desk is default, courtroom shows only when failed */}
       <img
-        src={courtroomSrc}
-        alt="Courtroom"
+        src={failed ? courtroomSrc : deskSrc} 
+        alt={failed ? 'Courtroom' : 'Desk'}
         style={{
           width: '100%',
           height: '100%',
           objectFit: 'cover',
-        }}
-      />
-
-      {/* Desk overlay (always part of background) */}
-      <img
-        src={deskSrc}
-        alt="Desk"
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: '60%',
-          maxHeight: '40%',
-          objectFit: 'contain',
-          pointerEvents: 'none', // desk won’t block clicks
         }}
       />
 
@@ -51,7 +48,7 @@ export default function CourtroomBackground({ courtroomSrc, deskSrc, children }:
           inset: 0,
         }}
       >
-        {children}
+        {childrenWithProps}
       </div>
     </div>
   );

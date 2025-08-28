@@ -4,7 +4,7 @@ import React from 'react';
 interface CourtroomBackgroundProps {
   courtroomSrc: string;
   deskSrc: string;
-  isCourtroom?: boolean;
+  isCourtroom?: boolean; // optional prop to switch background
   children: React.ReactNode;
 }
 

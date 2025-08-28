@@ -3,7 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { notifications as allNotifications, Notification } from './notifications';
 import Courtroom from './Courtroom';
 
-const NotificationManager: React.FC = () => {
+interface NotificationManagerProps {
+  onCourtroom?: (inCourt: boolean) => void; // optional callback for background
+}
+
+const NotificationManager: React.FC<NotificationManagerProps> = ({ onCourtroom }) => {
   const [queue, setQueue] = useState<Notification[]>([]);
   const [activeNotification, setActiveNotification] = useState<Notification | null>(null);
   const [inCourtroom, setInCourtroom] = useState(false);
@@ -18,12 +22,14 @@ const NotificationManager: React.FC = () => {
     setActiveNotification(next);
     setQueue(prev => prev.slice(1));
 
-    // Escalation timer
     const escalation = setTimeout(() => {
       if (!next.acknowledged) {
         setCourtReason(next.courtReason);
         setInCourtroom(true);
         setActiveNotification(null);
+
+        // Notify parent to switch background
+        if (onCourtroom) onCourtroom(true);
       }
     }, next.escalationDelay);
 
@@ -31,14 +37,19 @@ const NotificationManager: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!activeNotification) {
+    if (!activeNotification && !inCourtroom) {
       const timer = setTimeout(showNextNotification, 20000 + Math.random() * 10000);
       return () => clearTimeout(timer);
     }
   }, [activeNotification, queue, inCourtroom]);
 
   const acknowledgeNotification = () => setActiveNotification(null);
-  const handleRetry = () => setInCourtroom(false);
+
+  const handleRetry = () => {
+    setInCourtroom(false);
+    setCourtReason('');
+    if (onCourtroom) onCourtroom(false);
+  };
 
   return (
     <>

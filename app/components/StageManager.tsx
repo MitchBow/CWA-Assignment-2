@@ -1,70 +1,91 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import TaskList from './TaskList';
+import { tasks as allTasks, Task } from './tasks';
 
 interface StageManagerProps {
-  triggerCourtroom?: () => void; // injected from CourtroomBackground
+  inCourtroom?: boolean;
 }
 
-const StageManager: React.FC<StageManagerProps> = ({ triggerCourtroom }) => {
+const StageManager: React.FC<StageManagerProps> = ({ inCourtroom }) => {
   const [stage, setStage] = useState(1);
-  const [taskFailed, setTaskFailed] = useState(false);
+  const [activeTasks, setActiveTasks] = useState<Task[]>([]);
 
-  // Example: simulate a failed task after 15 seconds of stage 1
   useEffect(() => {
-    if (stage === 1 && !taskFailed) {
-      const timer = setTimeout(() => {
-        setTaskFailed(true);
-        if (triggerCourtroom) triggerCourtroom(); // swap to courtroom
-      }, 15000);
+    const stageTasks = allTasks.filter(t => t.stage === stage);
+    setActiveTasks(stageTasks.map(t => ({ ...t, completed: false })));
+  }, [stage]);
 
-      return () => clearTimeout(timer);
-    }
-  }, [stage, taskFailed, triggerCourtroom]);
+  const completeTask = (id: string) => {
+    setActiveTasks(prev => prev.map(t => (t.id === id ? { ...t, completed: true } : t)));
+  };
+
+  if (inCourtroom) return null;
 
   return (
-    <div style={{ borderRadius: '12px', padding: '20px' }}>
-      <h2>Stage {stage}</h2>
-      <p>This is where stage {stage} tasks/messages will appear.</p>
+    <div
+      style={{
+        width: '40%',             // make the box 40% of the page width
+        margin: '30px auto',      // center horizontally
+        padding: '20px',
+        borderRadius: '12px',
+        backgroundColor: 'var(--header-footer-background)',
+        boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+      }}
+    >
+      <h2 style={{ textAlign: 'center' }}>Stage {stage}</h2>
+      <ul>
+        {activeTasks.map(task => (
+          <li key={task.id} style={{ marginBottom: '10px' }}>
+            {task.message}{' '}
+            {!task.completed ? (
+              <button
+                onClick={() => completeTask(task.id)}
+                style={{
+                  marginLeft: '10px',
+                  padding: '4px 8px',
+                  borderRadius: '5px',
+                  cursor: 'pointer',
+                  backgroundColor: 'var(--button-background)',
+                  color: 'var(--button-text)',
+                }}
+              >
+                Done
+              </button>
+            ) : (
+              <span style={{ color: 'green', marginLeft: '10px' }}>✔ Completed</span>
+            )}
+          </li>
+        ))}
+      </ul>
 
-      <TaskList stage={stage} />
-
-      <div style={{ marginTop: '20px' }}>
-        <button
-          onClick={() => {
-            setStage(stage + 1);
-            setTaskFailed(false);
-          }}
-          style={{
-            background: 'blue',
-            color: 'white',
-            padding: '8px 12px',
-            borderRadius: '6px',
-            border: 'none',
-            cursor: 'pointer',
-          }}
-        >
-          Next Stage
-        </button>
+      <div style={{ marginTop: '20px', textAlign: 'center' }}>
         {stage > 1 && (
           <button
-            onClick={() => {
-              setStage(stage - 1);
-              setTaskFailed(false);
-            }}
+            onClick={() => setStage(stage - 1)}
             style={{
-              marginLeft: '10px',
-              background: 'blue',
-              color: 'white',
-              padding: '8px 12px',
+              marginRight: '10px',
+              padding: '6px 12px',
               borderRadius: '6px',
-              border: 'none',
               cursor: 'pointer',
+              backgroundColor: 'var(--button-background)',
+              color: 'var(--button-text)',
             }}
           >
             Previous Stage
           </button>
         )}
+        <button
+          onClick={() => setStage(stage + 1)}
+          style={{
+            padding: '6px 12px',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            backgroundColor: 'var(--button-background)',
+            color: 'var(--button-text)',
+          }}
+        >
+          Next Stage
+        </button>
       </div>
     </div>
   );

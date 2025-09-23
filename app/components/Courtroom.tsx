@@ -43,7 +43,7 @@ const Courtroom: React.FC<CourtroomProps> = ({ visible, reason, onRetry }) => {
           color: 'var(--text-color)',
         }}
       >
-        <h2>Courtroom</h2>
+        <h2>YOU GOT SENT TO COURT</h2>
         <p>{reason}</p>
         <div style={{ marginTop: '20px' }}>
           {/* Retry button */}

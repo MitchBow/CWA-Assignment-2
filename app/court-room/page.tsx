@@ -17,7 +17,7 @@ export default function Home() {
       isCourtroom={isCourtroom}
     >
       <Header />
-      <ManualTimer initialSeconds={0} />
+      <ManualTimer/>
       <StageManager />
       <NotificationManager onCourtroom={setIsCourtroom} />
     </CourtroomBackground>

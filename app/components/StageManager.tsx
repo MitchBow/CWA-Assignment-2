@@ -30,7 +30,7 @@ const stageCode: Record<number, string> = {
     <img src="logo.png">
     <ul>
       <li>Item 1
-      <li>Item 2</li>
+      <li>Item 2
     </ul>
   </body>
 </html>

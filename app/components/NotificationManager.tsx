@@ -4,7 +4,7 @@ import { notifications as allNotifications, Notification } from './notifications
 import Courtroom from './Courtroom';
 
 interface NotificationManagerProps {
-  onCourtroom?: (inCourt: boolean) => void; // optional callback for background
+  onCourtroom?: (inCourt: boolean) => void;
 }
 
 const NotificationManager: React.FC<NotificationManagerProps> = ({ onCourtroom }) => {
@@ -54,9 +54,15 @@ const NotificationManager: React.FC<NotificationManagerProps> = ({ onCourtroom }
   return (
     <>
       {activeNotification && !inCourtroom && (
-        <div style={{ position:'fixed', bottom:'20px', right:'20px', maxWidth:'300px', backgroundColor:'var(--header-footer-background)', border:'1px solid var(--border-color)', padding:'10px', borderRadius:'8px', zIndex:1000, color:'var(--text-color)' }}>
+        <div style={{ position:'fixed', bottom:'20px', right:'20px',
+          maxWidth:'300px', backgroundColor:'var(--header-footer-background)',
+          border:'1px solid var(--border-color)', padding:'10px', borderRadius:'8px',
+          zIndex:1000, color:'var(--text-color)' }}>
           <strong>{activeNotification.sender}:</strong> {activeNotification.message}
-          <button onClick={acknowledgeNotification} style={{ marginLeft:'10px', cursor:'pointer', borderRadius:'5px', backgroundColor:'var(--button-background)', color:'var(--button-text)' }}>
+          <button onClick={acknowledgeNotification} style={{ marginLeft:'10px',
+             cursor:'pointer', borderRadius:'5px',
+             backgroundColor:'var(--button-background)',
+             color:'var(--button-text)' }}>
             Acknowledge
           </button>
         </div>
